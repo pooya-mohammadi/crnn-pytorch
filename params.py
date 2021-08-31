@@ -1,8 +1,12 @@
 import torch
 import persian_alphabets as alphabets
 from deep_utils import AugmentTorch
+
 # about data and net
-TRAIN_ROOT, VAL_ROOT = '/home/ai/projects/Irancel/recognition/train', '/home/ai/projects/Irancel/recognition/val'
+
+TRAIN_ROOT, VAL_ROOT = '/home/ai/projects/Irancel/recognition/generating_10digit_num/train', \
+                       '/home/ai/projects/Irancel/recognition/generating_10digit_num/val'
+NAME = 'id_rec'
 alphabet = alphabets.alphabet
 keep_ratio = False  # whether to keep ratio for image resize
 manualSeed = 1234  # reproduce experiemnt
@@ -28,7 +32,7 @@ saveInterval = 1000  # interval to save model
 n_val_disp = 10  # number of samples to display when val the model
 
 # finetune
-nepoch = 2000  # number of epochs to train for
+nepoch = 500  # number of epochs to train for
 batchSize = 64  # input batch size
 lr = 0.0001  # learning rate for Critic, not used by adadealta
 beta1 = 0.5  # beta1 for adam. default=0.5

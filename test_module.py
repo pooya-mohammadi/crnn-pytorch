@@ -9,9 +9,9 @@ import dataset
 import models.crnn as crnn
 import params
 
-model_path = 'expr/netCRNN_999.pth'
-image_dir = '/home/ai/projects/Irancel/recognition/train'
-image_res = '/home/ai/projects/Irancel/recognition/train_problematic'
+model_path = f'expr/{params.NAME}_444.pth'
+image_dir = '/home/ai/projects/Irancel/recognition/test'
+image_res = '/home/ai/projects/Irancel/recognition/test_test'
 os.makedirs(image_res, exist_ok=True)
 device = 'cpu'
 

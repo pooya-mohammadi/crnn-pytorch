@@ -209,8 +209,8 @@ if __name__ == "__main__":
 
             if j % params.valInterval == 0:
                 val(crnn, criterion)
-                save_path = f'{params.expr_dir}/netCRNN_{epoch}.pth'
+                save_path = f'{params.expr_dir}/{params.NAME}_{epoch}.pth'
                 torch.save(crnn.state_dict(), save_path)
                 print(f'model saved in {save_path}')
 
-    torch.save(crnn.state_dict(), f'{params.expr_dir}/netCRNN_{epoch}.pth')
+    torch.save(crnn.state_dict(), f'{params.expr_dir}/{params.NAME}_{epoch}.pth')
