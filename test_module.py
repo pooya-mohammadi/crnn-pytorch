@@ -9,10 +9,10 @@ import dataset
 import models.crnn as crnn
 import params
 
-model_path = f'expr/{params.NAME}_444.pth'
-image_dir = '/home/ai/projects/Irancel/recognition/test'
-image_res = '/home/ai/projects/Irancel/recognition/test_test'
-os.makedirs(image_res, exist_ok=True)
+model_path = f'expr/{params.NAME}_499.pth'
+image_dir = '/home/ai/projects/Irancel/recognition/train'
+mistake_dir = '/home/ai/projects/Irancel/recognition/train_mistake'
+os.makedirs(mistake_dir, exist_ok=True)
 device = 'cpu'
 
 nclass = len(params.alphabet) + 1
@@ -40,7 +40,7 @@ for image_name in os.listdir(image_dir):
     toc = time.time()
     # print(toc - tic)
     raw_pred = converter.decode(preds.data, preds_size.data, raw=True)
-    image_name = os.path.splitext(os.path.basename(image_path))[0].split('_')[-1]
+    image_name = os.path.splitext(os.path.basename(image_path))[0].split('_')[-1].split('-')[0]
+    print(f'{image_name == sim_pred} %-20s => %-20s   |   {image_name}' % (raw_pred, sim_pred))
     if image_name != sim_pred:
-        print(f'{image_name == sim_pred} %-20s => %-20s   |   {image_name}' % (raw_pred, sim_pred))
-        shutil.copy(image_path, os.path.join(image_res, f'{image_name}---{sim_pred}.jpg'))
+        shutil.copy(image_path, os.path.join(mistake_dir, f'{image_name}---{sim_pred}.jpg'))
