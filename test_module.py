@@ -43,4 +43,4 @@ for image_name in os.listdir(image_dir):
     image_name = os.path.splitext(os.path.basename(image_path))[0].split('_')[-1].split('-')[0]
     print(f'{image_name == sim_pred} %-20s => %-20s   |   {image_name}' % (raw_pred, sim_pred))
     if image_name != sim_pred:
-        shutil.copy(image_path, os.path.join(mistake_dir, f'{image_name}---{sim_pred}.jpg'))
+        shutil.copy(image_path, os.path.join(mistake_dir, f'{sim_pred}---{image_name}.jpg'))
