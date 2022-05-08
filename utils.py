@@ -7,7 +7,7 @@ from torch.autograd import Variable
 import collections
 
 
-class strLabelConverter(object):
+class strLabelConverter:
     """Convert between str and label.
 
     NOTE:
@@ -64,7 +64,7 @@ class strLabelConverter(object):
             result_temp.append(r)
 
         text = result_temp
-        return (torch.LongTensor(text), torch.LongTensor(length))
+        return torch.LongTensor(text), torch.LongTensor(length)
 
     def decode(self, t, length, raw=False):
         """Decode encoded texts back into strs.

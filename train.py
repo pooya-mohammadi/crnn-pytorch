@@ -32,7 +32,7 @@ def data_loader():
                                                )
 
     val_dataset = dataset.CRNNDataset(root=params.VAL_ROOT,
-                                      transform=dataset.ResizeNormalize((params.imgW, params.imgH)))
+                                      transform=dataset.ResizeNormalize((params.IMG_W, params.IMG_H)))
     val_loader = torch.utils.data.DataLoader(val_dataset,
                                              shuffle=True,
                                              batch_size=params.batchSize,
@@ -63,7 +63,7 @@ def weights_init(m):
 
 def net_init():
     nclass = len(params.alphabet) + 1
-    crnn = net.CRNN(params.imgH, params.nc, nclass, params.nh)
+    crnn = net.CRNN(params.IMG_H, params.N_CHANNELS, nclass, params.N_HIDDEN)
     crnn.apply(weights_init)
     if params.pretrained != '':
         print('loading pretrained model from %s' % params.pretrained)
