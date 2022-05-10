@@ -45,7 +45,7 @@ if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument("--model_path", default="logs/best_model.ckpt")
     parser.add_argument("--alphabet_name", default="FA_LPR", help="alphabet name from alphabets.py module")
-    parser.add_argument("--img_name", default="sample_images/۱۳ج۷۷۲۴۴_9779.jpg")
+    parser.add_argument("--img_name", default="sample_images/۱۴ق۹۱۸۱۱_7073.jpg")
     args = parser.parse_args()
     model = CRNNPred(args.model_path, characters=ALPHABETS[args.alphabet_name])
     prediction = model.detect(args.img_name)
