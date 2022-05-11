@@ -8,16 +8,16 @@ class BasicConfig:
     IMG_H = 32  # the height of the input image to network
     IMG_W = 100  # the width of the input image to network
 
-    ALPHABET_NAME = "FA_LPR"
+    MODEL_PATH = "logs"
+    FILE_NAME = "best_model"
 
     # Modify
     N_CLASSES = 35
     MEAN = [0.4845]
     STD = [0.1884]
+    ALPHABET_NAME = "FA_LPR"
     TRAIN_ROOT = '/home/ai/projects/vehicle-plate-recognition-training/recognition/datasets/train'
     VAL_ROOT = '/home/ai/projects/vehicle-plate-recognition-training/recognition/datasets/val'
-    MODEL_PATH = "logs"
-    FILE_NAME = "best_model"
 
 
 class Config(BasicConfig):
