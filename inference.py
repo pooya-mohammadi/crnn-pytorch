@@ -1,15 +1,13 @@
 from argparse import ArgumentParser
 from pathlib import Path
 from typing import Union
-
 import numpy as np
 import torch
 import torchvision.transforms as T
-from PIL import Image
-
+from PIL import Image, ImageDraw, ImageFont
 from alphabets import ALPHABETS
 from train import LitCRNN
-from deep_utils import CTCDecoder
+from deep_utils import CTCDecoder, Box, show_destroy_cv2
 
 
 class CRNNPred:
@@ -45,8 +43,17 @@ if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument("--model_path", default="logs/best_model.ckpt")
     parser.add_argument("--alphabet_name", default="FA_LPR", help="alphabet name from alphabets.py module")
-    parser.add_argument("--img_path", default="sample_images/۱۴ق۹۱۸۱۱_7073.jpg")
+    parser.add_argument("--img_path", default="sample_images/۱۳ج۷۷۲۴۴_9779.jpg")
     args = parser.parse_args()
     model = CRNNPred(args.model_path, characters=ALPHABETS[args.alphabet_name])
+    img = Image.open(args.img_path)
     prediction = model.detect(args.img_path)
+    prediction = "".join(prediction)
+    draw = ImageDraw.Draw(img)
+    # font = ImageFont.truetype(<font-file>, <font-size>)
+    font = ImageFont.truetype("assets/Vazir.ttf", 32)
+    # draw.text((x, y),"Sample Text",(r,g,b))
+    draw.text((20, 20), prediction, (0, 255, 0), font=font)
+
+    show_destroy_cv2(np.array(img)[..., ::-1])
     print("".join(prediction))
