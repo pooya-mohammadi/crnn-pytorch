@@ -1,6 +1,6 @@
 # CRNN-Pytorch
 
-Pytorch implementation of CRNN.
+Pytorch implementation of the CRNN model.
 In this repository I explain how to train a license plate-recognition model with pytorch-lightning.
 
 ## Installation:
@@ -36,6 +36,10 @@ command:
 
 ```commandline
 python get_character_sets.py --data_directory <path-to-dataset>
+```
+The output will be like the following: 
+```commandline
+[INFO] characters: +ابتثجدزسشصطعقلمنهوپگی۰۱۲۳۴۵۶۷۸۹
 ```
 
 Finally, run the following command to get the `mean`, `std` and `n_classes` of your input dataset:
