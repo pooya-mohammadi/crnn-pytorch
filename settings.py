@@ -25,6 +25,8 @@ class Config(BasicConfig):
     N_CHANNELS = 1
     DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
     LR = 0.0005
+    LR_PATIENCE = 10
+    LR_REDUCE_FACTOR = 0.5
     SEAD = 1234
     BATCH_SIZE = 128
     EPOCHS = 100
@@ -40,7 +42,7 @@ class Config(BasicConfig):
     ALPHABETS = ALPHABETS[BasicConfig.ALPHABET_NAME]
 
     # Early stopping
-    EARLY_STOPPING_PATIENCE = 10
+    EARLY_STOPPING_PATIENCE = 20
 
 # keep_ratio = False  # whether to keep ratio for image resize
 # random_sample = True  # whether to sample the hand_labeled_dataset with random sampler
