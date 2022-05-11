@@ -1,10 +1,11 @@
 import torch
 import pytorch_lightning as pl
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 from dataset import CRNNDataset
 from crnn import CRNN
 from settings import Config
 from torch.nn import CTCLoss
-from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint
+from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint, LearningRateMonitor
 
 torch.backends.cudnn.benchmark = True
 
@@ -52,7 +53,9 @@ class LitCRNN(pl.LightningModule):
 
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), lr=Config.LR)
-        return optimizer
+        scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=Config.LR_REDUCE_FACTOR,
+                                      patience=Config.LR_PATIENCE, verbose=True)
+        return {"optimizer": optimizer, "lr_scheduler": scheduler, "monitor": "val_loss"}
 
     @staticmethod
     def get_loaders():
@@ -79,10 +82,11 @@ def main():
     early_stopping = EarlyStopping(monitor='val_loss', patience=Config.EARLY_STOPPING_PATIENCE)
     model_checkpoint = ModelCheckpoint(dirpath=Config.MODEL_PATH, filename=Config.FILE_NAME, monitor="val_loss",
                                        verbose=True)
+    learning_rate_monitor = LearningRateMonitor(logging_interval="epoch")
     trainer = pl.Trainer(gpus=1 if Config.DEVICE == "cuda" else 0,
                          max_epochs=Config.EPOCHS,
                          min_epochs=Config.EPOCHS // 10,
-                         callbacks=[early_stopping, model_checkpoint])
+                         callbacks=[early_stopping, model_checkpoint, learning_rate_monitor])
     lit_crnn = LitCRNN()
     train_loader, val_loader = lit_crnn.get_loaders()
     trainer.fit(model=lit_crnn, train_dataloaders=train_loader, val_dataloaders=val_loader)
