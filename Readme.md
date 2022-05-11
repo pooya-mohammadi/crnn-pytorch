@@ -74,6 +74,12 @@ The output should be like the following:
 ۱۴ق۹۱۸۱۱
 ```
 
+Image examples:
+
+![](assets/sample_01.png)
+
+![](assets/sample_02.png)
+
 ### Foot-Notes:
 1. For labeling tool checkout my project:
    1. https://github.com/pooya-mohammadi/ocr-labeling-tool
