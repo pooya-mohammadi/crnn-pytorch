@@ -80,9 +80,13 @@ Image examples:
 
 ![](assets/sample_02.png)
 
+### Sample Persian Dataset is avalable by Amirkabir University of Technology in the following link:
+https://ceit.aut.ac.ir/~keyvanrad/download/ML971/project/
+
 ### Foot-Notes:
 1. For labeling tool checkout my project:
    1. https://github.com/pooya-mohammadi/ocr-labeling-tool
+   
 
 # References
 
