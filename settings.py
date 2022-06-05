@@ -8,8 +8,7 @@ class BasicConfig:
     IMG_H = 32  # the height of the input image to network
     IMG_W = 100  # the width of the input image to network
 
-    MODEL_PATH = "logs"
-    FILE_NAME = "best_model"
+    FILE_NAME = "best"
 
     # Modify
     N_CLASSES = 35
@@ -18,6 +17,7 @@ class BasicConfig:
     ALPHABET_NAME = "FA_LPR"
     TRAIN_ROOT = '/home/ai/projects/vehicle-plate-recognition-training/recognition/datasets/train'
     VAL_ROOT = '/home/ai/projects/vehicle-plate-recognition-training/recognition/datasets/val'
+    OUTPUT_DIR = "output"
 
 
 class Config(BasicConfig):
@@ -30,7 +30,7 @@ class Config(BasicConfig):
     SEAD = 1234
     BATCH_SIZE = 128
     EPOCHS = 100
-    WORKERS = 8
+    N_WORKERS = 8
 
     TRANSFORMATION = transforms.Compose([
         transforms.Grayscale(),
@@ -40,32 +40,12 @@ class Config(BasicConfig):
     )
 
     ALPHABETS = ALPHABETS[BasicConfig.ALPHABET_NAME]
+    CHAR2LABEL = dict()
+    LABEL2CHAR = dict()
 
     # Early stopping
     EARLY_STOPPING_PATIENCE = 20
 
-# keep_ratio = False  # whether to keep ratio for image resize
-# random_sample = True  # whether to sample the hand_labeled_dataset with random sampler
-#
-# pretrained = ''  # path to pretrained model (to continue training)
-# expr_dir = 'expr'  # where to store samples and models
-# # dealwith_lossnan = False  # whether to replace all nan/inf in gradients to zero
-#
-# # hardware
-# multi_gpu = False  # whether to use multi gpu
-# ngpu = 1  # number of GPUs to use. Do remember to set multi_gpu to True!
-# workers = 0  # number of data loading workers
-#
-# # training process
-# displayInterval = 100  # interval to be print the train loss
-# valInterval = 1000  # interval to val the model loss and accuracy
-# saveInterval = 1000  # interval to save model
-# n_val_disp = 10  # number of samples to display when val the model
-#
-# # finetune
-# nepoch = 500  # number of epochs to train for
-# batchSize = 64  # input batch size
-# # lr = 0.0001  # learning rate for Critic, not used by adadealta
-# beta1 = 0.5  # beta1 for adam. default=0.5
-# adam = True  # whether to use adam (default is rmsprop)
-# adadelta = False  # whether to use adadelta (default is rmsprop)
+
+Config.CHAR2LABEL = {char: i + 1 for i, char in enumerate(Config.ALPHABETS)}
+Config.LABEL2CHAR = {label: char for char, label in Config.CHAR2LABEL.items()}
