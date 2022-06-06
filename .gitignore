@@ -2,3 +2,5 @@
 logs
 lightning_logs
 *__pycache__*
+*.ckpt
+*.pt
