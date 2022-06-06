@@ -67,7 +67,7 @@ python train.py
 ## Inference
 For inference run the following code:
 ```commandline
-python inference.py --model_path logs/best_model.ckpt --img_path sample_images/۱۴ق۹۱۸۱۱_7073.jpg
+python inference.py --model_path output_exp_1/best.ckpt --img_path sample_images/۱۴ق۹۱۸۱۱_7073.jpg
 ```
 The output should be like the following:
 ```commandline
@@ -87,7 +87,7 @@ Password: ML971Data
 
 ### Foot-Notes:
 1. For labeling tool checkout my project:
-   1. https://github.com/pooya-mohammadi/ocr-labeling-tool
+https://github.com/pooya-mohammadi/ocr-labeling-tool
    
 
 # References
