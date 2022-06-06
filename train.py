@@ -1,6 +1,7 @@
+from os.path import join
 import torch
 import pytorch_lightning as pl
-from deep_utils import CTCDecoder, mkdir_incremental
+from deep_utils import mkdir_incremental
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from dataset import CRNNDataset
 from crnn import CRNN
@@ -12,10 +13,8 @@ torch.backends.cudnn.benchmark = True
 
 
 class LitCRNN(pl.LightningModule):
-    def __init__(self, label2char=None, decode_method="greedy"):
+    def __init__(self):
         super(LitCRNN, self).__init__()
-        self.label2char = label2char
-        self.decode_method = decode_method
         self.model = CRNN(img_h=Config.IMG_H,
                           n_channels=Config.N_CHANNELS,
                           n_classes=Config.N_CLASSES,
@@ -115,12 +114,25 @@ def main():
                          min_epochs=Config.EPOCHS // 10,
                          callbacks=[early_stopping, model_checkpoint, learning_rate_monitor],
                          default_root_dir=output_dir)
-    lit_crnn = LitCRNN(Config.LABEL2CHAR)
+    lit_crnn = LitCRNN()
     train_loader, val_loader = lit_crnn.get_loaders()
     trainer.fit(model=lit_crnn, train_dataloaders=train_loader, val_dataloaders=val_loader)
 
     trainer.test(lit_crnn, ckpt_path="best", dataloaders=val_loader)
     trainer.test(lit_crnn, ckpt_path="best", dataloaders=train_loader)
+
+    # Adding artifacts to weights
+    weight_path = join(output_dir, f"{Config.FILE_NAME}.ckpt")
+    best_weight = torch.load(weight_path)
+    best_weight['img_height'] = Config.IMG_H
+    best_weight['img_width'] = Config.IMG_W
+    best_weight['n_channels'] = Config.N_CHANNELS
+    best_weight['n_hidden'] = Config.N_HIDDEN
+    best_weight['mean'] = Config.MEAN
+    best_weight['std'] = Config.STD
+    best_weight['label2char'] = Config.LABEL2CHAR
+    best_weight['n_classes'] = Config.N_CLASSES
+    torch.save(best_weight, weight_path)
 
 
 if __name__ == '__main__':

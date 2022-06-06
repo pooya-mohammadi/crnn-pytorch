@@ -3,29 +3,27 @@ from pathlib import Path
 from typing import Union
 import numpy as np
 import torch
-import torchvision.transforms as T
+import torchvision.transforms as transforms
 from PIL import Image, ImageDraw, ImageFont
-from alphabets import ALPHABETS
 from train import LitCRNN
 from deep_utils import CTCDecoder, show_destroy_cv2
 import time
 
 
 class CRNNPred:
-    def __init__(self, model_path, characters, img_height=32, img_width=100,
-                 decode_method='greedy'):
-        self.char2label = {char: i + 1 for i, char in enumerate(characters)}
-        self.label2char = {label: char for char, label in self.char2label.items()}
+    def __init__(self, model_path, decode_method='greedy'):
         self.decode_method = decode_method
         self.model = LitCRNN.load_from_checkpoint(model_path)
         self.model.eval()
-
-        self.transformer = T.Compose([
-            T.Grayscale(),
-            T.RandomHorizontalFlip(p=1),
-            T.Resize((img_height, img_width)),
-            T.ToTensor()]
+        state_dict = torch.load(model_path)
+        self.label2char = state_dict['label2char']
+        self.transformer = transforms.Compose([
+            transforms.Grayscale(),
+            transforms.Resize((state_dict['img_height'], state_dict['img_width'])),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=state_dict['mean'], std=state_dict['std'])]
         )
+        del state_dict
 
     def detect(self, img: Union[str, Path, np.ndarray]):
         if isinstance(img, np.ndarray):
@@ -43,10 +41,9 @@ class CRNNPred:
 if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument("--model_path", default="output/exp_1/best.ckpt")
-    parser.add_argument("--alphabet_name", default="FA_LPR", help="alphabet name from alphabets.py module")
-    parser.add_argument("--img_path", default="sample_images/۱۳ج۷۷۲۴۴_9779.jpg")
+    parser.add_argument("--img_path", default="sample_images/image_02.jpg")
     args = parser.parse_args()
-    model = CRNNPred(args.model_path, characters=ALPHABETS[args.alphabet_name])
+    model = CRNNPred(args.model_path)
     img = Image.open(args.img_path)
     tic = time.time()
     prediction = model.detect(args.img_path)

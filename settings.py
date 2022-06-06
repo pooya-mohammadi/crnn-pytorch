@@ -26,17 +26,16 @@ class Config(BasicConfig):
     DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
     LR = 0.0005
     LR_PATIENCE = 10
-    LR_REDUCE_FACTOR = 0.5
-    SEAD = 1234
+    LR_REDUCE_FACTOR = 0.1
     BATCH_SIZE = 128
-    EPOCHS = 100
+    EPOCHS = 200
     N_WORKERS = 8
 
     TRANSFORMATION = transforms.Compose([
         transforms.Grayscale(),
-        transforms.RandomHorizontalFlip(p=1),  # Makes no difference :D
         transforms.Resize((BasicConfig.IMG_H, BasicConfig.IMG_W)),
-        transforms.ToTensor()]
+        transforms.ToTensor(),
+        transforms.Normalize(mean=BasicConfig.MEAN, std=BasicConfig.STD), ]
     )
 
     ALPHABETS = ALPHABETS[BasicConfig.ALPHABET_NAME]
@@ -44,7 +43,7 @@ class Config(BasicConfig):
     LABEL2CHAR = dict()
 
     # Early stopping
-    EARLY_STOPPING_PATIENCE = 20
+    EARLY_STOPPING_PATIENCE = 30
 
 
 Config.CHAR2LABEL = {char: i + 1 for i, char in enumerate(Config.ALPHABETS)}
