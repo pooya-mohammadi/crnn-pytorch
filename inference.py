@@ -1,12 +1,13 @@
 from argparse import ArgumentParser
 from pathlib import Path
 from typing import Union
+import cv2
 import numpy as np
 import torch
 import torchvision.transforms as transforms
 from PIL import Image, ImageDraw, ImageFont
 from train import LitCRNN
-from deep_utils import CTCDecoder, show_destroy_cv2
+from deep_utils import CTCDecoder, show_destroy_cv2, split_extension, Box
 import time
 
 
@@ -41,7 +42,7 @@ class CRNNPred:
 if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument("--model_path", default="output/exp_1/best.ckpt")
-    parser.add_argument("--img_path", default="sample_images/image_02.jpg")
+    parser.add_argument("--img_path", default="sample_images/image_01.jpg")
     args = parser.parse_args()
     model = CRNNPred(args.model_path)
     img = Image.open(args.img_path)
@@ -49,11 +50,7 @@ if __name__ == '__main__':
     prediction = model.detect(args.img_path)
     prediction = "".join(prediction)
     toc = time.time()
-    draw = ImageDraw.Draw(img)
-    # font = ImageFont.truetype(<font-file>, <font-size>)
-    font = ImageFont.truetype("assets/Vazir.ttf", 32)
-    # draw.text((x, y),"Sample Text",(r,g,b))
-    draw.text((20, 20), prediction, (0, 255, 0), font=font)
-
-    show_destroy_cv2(np.array(img)[..., ::-1])
+    img = cv2.imread(args.img_path)
+    img = Box.put_text_pil(img, prediction, org=(20, 20), font="assets/Vazir.ttf", font_size=32)
+    cv2.imwrite(split_extension(args.img_path, suffix="_res"), img)
     print("prediction:", "".join(prediction), f"\n elapsed time is {toc - tic}")
