@@ -3,6 +3,9 @@
 Pytorch implementation of the CRNN model.
 In this repository I explain how to train a license plate-recognition model with pytorch-lightning.
 
+## CRNN Architecture:
+![](assets/crnn-architecture.png)
+
 ## Installation:
 
 ```commandline
