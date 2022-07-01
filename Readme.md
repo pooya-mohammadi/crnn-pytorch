@@ -97,3 +97,4 @@ https://github.com/pooya-mohammadi/ocr-labeling-tool
 
 1. https://github.com/pooya-mohammadi/deep_utils
 2. https://github.com/AryanShekarlaban/
+3. https://arxiv.org/pdf/1507.05717.pdf
