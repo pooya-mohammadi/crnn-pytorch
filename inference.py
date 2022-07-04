@@ -1,22 +1,24 @@
 from argparse import ArgumentParser
 from pathlib import Path
-from typing import Union
+from typing import Union, List
 import cv2
 import numpy as np
 import torch
 import torchvision.transforms as transforms
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image
 from train import LitCRNN
-from deep_utils import CTCDecoder, show_destroy_cv2, split_extension, Box
+from deep_utils import CTCDecoder, split_extension, Box, TorchVisionUtils
 import time
 
 
-class CRNNPred:
-    def __init__(self, model_path, decode_method='greedy'):
+class CRNNInference:
+    def __init__(self, model_path, decode_method='greedy', device='cpu'):
+        self.device = device
         self.decode_method = decode_method
         self.model = LitCRNN.load_from_checkpoint(model_path)
         self.model.eval()
-        state_dict = torch.load(model_path)
+        self.model.to(self.device)
+        state_dict = torch.load(model_path, map_location=self.device)
         self.label2char = state_dict['label2char']
         self.transformer = transforms.Compose([
             transforms.Grayscale(),
@@ -26,7 +28,7 @@ class CRNNPred:
         )
         del state_dict
 
-    def detect(self, img: Union[str, Path, np.ndarray]):
+    def infer(self, img: Union[str, Path, np.ndarray]):
         if isinstance(img, np.ndarray):
             img = Image.fromarray(img)
         else:
@@ -34,9 +36,16 @@ class CRNNPred:
         image = self.transformer(img)
         image = image.view(1, *image.size())
         with torch.no_grad():
-            preds = self.model(image).squeeze(0).numpy()
+            preds = self.model(image).cpu().squeeze(0).numpy()
         sim_pred = CTCDecoder.ctc_decode(preds, decoder_name=self.decode_method, label2char=self.label2char)
         return sim_pred
+
+    def infer_group(self, images: Union[List[np.ndarray]]):
+        images = TorchVisionUtils.transform_concatenate_images(images, self.transformer, device=self.device)
+        with torch.no_grad():
+            preds = self.model(images).squeeze(0).numpy()
+        sim_preds = CTCDecoder.ctc_decode_batch(preds, decoder_name=self.decode_method, label2char=self.label2char)
+        return sim_preds
 
 
 if __name__ == '__main__':
@@ -44,10 +53,10 @@ if __name__ == '__main__':
     parser.add_argument("--model_path", default="output/exp_1/best.ckpt")
     parser.add_argument("--img_path", default="sample_images/image_01.jpg")
     args = parser.parse_args()
-    model = CRNNPred(args.model_path)
+    model = CRNNInference(args.model_path)
     img = Image.open(args.img_path)
     tic = time.time()
-    prediction = model.detect(args.img_path)
+    prediction = model.infer(args.img_path)
     prediction = "".join(prediction)
     toc = time.time()
     img = cv2.imread(args.img_path)
