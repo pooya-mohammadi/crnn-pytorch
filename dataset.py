@@ -3,6 +3,7 @@ from argparse import ArgumentParser
 from os.path import join
 from os.path import split
 import torch
+from torch import nn
 from torch.utils.data import Dataset, DataLoader
 import torchvision.transforms as transforms
 from PIL import Image
@@ -93,7 +94,9 @@ class CRNNDataset(Dataset):
     def collate_fn(batch):
         images, labels, labels_lengths = zip(*batch)
         images = torch.cat(images, dim=0)
-        labels = torch.cat(labels, dim=0)
+        labels = [label.squeeze(0) for label in labels]
+        # padding with zero which is CTC's delimiter
+        labels = nn.utils.rnn.pad_sequence(labels, padding_value=0).T
         labels_lengths = torch.cat(labels_lengths, dim=0)
         return images, labels, labels_lengths
 
@@ -121,6 +124,8 @@ if __name__ == '__main__':
                         default="/home/ai/projects/vehicle-plate-recognition-training/recognition/datasets/train")
     parser.add_argument("--batch_size", default=128)
     parser.add_argument("--alphabet_name", default="FA_LPR", help="alphabet name from alphabets.py module")
+    parser.add_argument("--alphabets", default='ابپتشثجدزسصطعفقکگلمنوهی+۰۱۲۳۴۵۶۷۸۹',
+                        help="alphabets used in dataset, if this is set the alphabet_name is ignored")
     args = parser.parse_args()
 
     transformations = transforms.Compose([
@@ -131,7 +136,7 @@ if __name__ == '__main__':
     )
 
     dataset = CRNNDataset(root=args.train_directory, transform=transformations,
-                          characters=ALPHABETS[args.alphabet_name])
+                          characters=args.alphabets if args.alphabets is not None else ALPHABETS[args.alphabet_name])
     data_loader = DataLoader(dataset, batch_size=args.batch_size, collate_fn=dataset.collate_fn)
     mean, std = get_mean_std(data_loader)
     log_print(None, f"MEAN: {mean}, STD: {std}")
