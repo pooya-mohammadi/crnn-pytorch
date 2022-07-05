@@ -50,6 +50,11 @@ Finally, run the following command to get the `mean`, `std` and `n_classes` of y
 ```commandline
 python dataset.py --train_directory <your-train-dir> --alphabet_name FA_LPR --batch_size 128
 ```
+or
+
+```commandline
+python dataset.py --train_directory <your-train-dir> --alphabets +ابتثجدزسشصطعقلمنهوپگی۰۱۲۳۴۵۶۷۸۹  --batch_size 128
+```
 
 The output would be like the below:
 
