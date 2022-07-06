@@ -81,7 +81,7 @@ class LitCRNN(pl.LightningModule):
     @staticmethod
     def get_loaders(config):
         train_dataset = CRNNDataset(root=config.train_directory, characters=config.alphabets,
-                                    transform=config.TRANSFORMATION)
+                                    transform=config.train_transform)
         train_loader = torch.utils.data.DataLoader(train_dataset,
                                                    batch_size=config.BATCH_SIZE,
                                                    shuffle=True,
@@ -90,7 +90,7 @@ class LitCRNN(pl.LightningModule):
                                                    )
 
         val_dataset = CRNNDataset(root=config.val_directory, characters=config.alphabets,
-                                  transform=config.TRANSFORMATION)
+                                  transform=config.val_transform)
         val_loader = torch.utils.data.DataLoader(val_dataset,
                                                  shuffle=True,
                                                  batch_size=config.BATCH_SIZE,

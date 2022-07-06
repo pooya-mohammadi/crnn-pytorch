@@ -21,8 +21,38 @@ class BasicConfig:
     output_dir = "output"
 
 
+@dataclass(init=True, repr=True)
+class AugConfig:
+    train_transform = transforms.Compose([
+        transforms.Grayscale(),
+        transforms.Resize((BasicConfig.IMG_H, BasicConfig.IMG_W)),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=BasicConfig.mean, std=BasicConfig.std), ]
+    )
+    val_transform = transforms.Compose([
+        transforms.Grayscale(),
+        transforms.Resize((BasicConfig.IMG_H, BasicConfig.IMG_W)),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=BasicConfig.mean, std=BasicConfig.std), ]
+    )
+
+    def update_aug(self):
+        self.train_transform = transforms.Compose([
+            transforms.Grayscale(),
+            transforms.Resize((self.IMG_H, self.IMG_W)),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=self.mean, std=self.std), ]
+        )
+        self.val_transform = transforms.Compose([
+            transforms.Grayscale(),
+            transforms.Resize((self.IMG_H, self.IMG_W)),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=self.mean, std=self.std), ]
+        )
+
+
 @dataclass(init=True)
-class Config(BasicConfig):
+class Config(BasicConfig, AugConfig):
     N_HIDDEN = 256  # size of the lstm hidden state
     N_CHANNELS = 1
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -32,13 +62,6 @@ class Config(BasicConfig):
     BATCH_SIZE = 128
     epochs = 200
     N_WORKERS = 8
-
-    TRANSFORMATION = transforms.Compose([
-        transforms.Grayscale(),
-        transforms.Resize((BasicConfig.IMG_H, BasicConfig.IMG_W)),
-        transforms.ToTensor(),
-        transforms.Normalize(mean=BasicConfig.mean, std=BasicConfig.std), ]
-    )
 
     alphabets = ALPHABETS[BasicConfig.ALPHABET_NAME]
     CHAR2LABEL = dict()
@@ -57,8 +80,10 @@ class Config(BasicConfig):
         self.update()
 
     def update(self):
-        self.CHAR2LABEL = {char: i + 1 for i, char in enumerate(Config.alphabets)}
+        self.CHAR2LABEL = {char: i + 1 for i, char in enumerate(self.alphabets)}
         self.LABEL2CHAR = {label: char for char, label in self.CHAR2LABEL.items()}
+
+        self.update_aug()
 
     def __repr__(self):
         variables = vars(self)

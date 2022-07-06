@@ -14,14 +14,14 @@ from settings import Config
 
 
 class CRNNDataset(Dataset):
-    DEFAULT_TRANSFORM = transforms.Compose([
-        transforms.Grayscale(),
-        transforms.Resize((Config.IMG_H, Config.IMG_W)),
-        transforms.ToTensor()]
-    )
+    # DEFAULT_TRANSFORM = transforms.Compose([
+    #     transforms.Grayscale(),
+    #     transforms.Resize((Config.IMG_H, Config.IMG_W)),
+    #     transforms.ToTensor()]
+    # )
 
     def __init__(self, root, characters, transform=None, logger=None):
-        self.transform = self.DEFAULT_TRANSFORM if transform is None else transform
+        self.transform = transform
         # index zero is reserved for CTC's delimiter
         self.char2label = {char: i + 1 for i, char in enumerate(characters)}
         self.label2char = {label: char for char, label in self.char2label.items()}
@@ -95,8 +95,9 @@ class CRNNDataset(Dataset):
         images, labels, labels_lengths = zip(*batch)
         images = torch.cat(images, dim=0)
         labels = [label.squeeze(0) for label in labels]
-        # padding with zero which is CTC's delimiter
-        labels = nn.utils.rnn.pad_sequence(labels, padding_value=0).T
+        # padding with -100, does not matter because they will be ignored by ctc, the labels' length will inform
+        # ctc about the valid and padded labels
+        labels = nn.utils.rnn.pad_sequence(labels, padding_value=-100).T
         labels_lengths = torch.cat(labels_lengths, dim=0)
         return images, labels, labels_lengths
 
