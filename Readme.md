@@ -75,7 +75,7 @@ python train.py
 ## Inference
 For inference run the following code:
 ```commandline
-python inference.py --model_path output_exp_1/best.ckpt --img_path sample_images/۱۴ق۹۱۸۱۱_7073.jpg
+python crnn_inference.py --model_path output_exp_1/best.ckpt --img_path sample_images/۱۴ق۹۱۸۱۱_7073.jpg
 ```
 The output should be like the following:
 ```commandline
