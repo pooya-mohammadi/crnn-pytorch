@@ -16,7 +16,7 @@ from settings import Config
 class CRNNDataset(Dataset):
     # DEFAULT_TRANSFORM = transforms.Compose([
     #     transforms.Grayscale(),
-    #     transforms.Resize((Config.IMG_H, Config.IMG_W)),
+    #     transforms.Resize((Config.img_h, Config.img_w)),
     #     transforms.ToTensor()]
     # )
 
@@ -132,7 +132,7 @@ if __name__ == '__main__':
     transformations = transforms.Compose([
         transforms.Grayscale(),
         transforms.RandomHorizontalFlip(p=1),  # Makes no difference :D
-        transforms.Resize((Config.IMG_H, Config.IMG_W)),
+        transforms.Resize((Config.img_h, Config.img_w)),
         transforms.ToTensor()]
     )
 

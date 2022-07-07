@@ -6,16 +6,16 @@ from alphabets import ALPHABETS
 
 @dataclass(init=True)
 class BasicConfig:
-    IMG_H = 32  # the height of the input image to network
-    IMG_W = 100  # the width of the input image to network
+    img_h = 32  # the height of the input image to network
+    img_w = 100  # the width of the input image to network
 
-    FILE_NAME = "best"
+    file_name = "best"
 
     # Modify
-    N_CLASSES = 35
+    n_classes = 35
     mean = [0.4845]
     std = [0.1884]
-    ALPHABET_NAME = "FA_LPR"
+    alphabet_name = "FA_LPR"
     train_directory = '/home/ai/projects/vehicle-plate-recognition-training/recognition/datasets/train'
     val_directory = '/home/ai/projects/vehicle-plate-recognition-training/recognition/datasets/val'
     output_dir = "output"
@@ -25,13 +25,13 @@ class BasicConfig:
 class AugConfig:
     train_transform = transforms.Compose([
         transforms.Grayscale(),
-        transforms.Resize((BasicConfig.IMG_H, BasicConfig.IMG_W)),
+        transforms.Resize((BasicConfig.img_h, BasicConfig.img_w)),
         transforms.ToTensor(),
         transforms.Normalize(mean=BasicConfig.mean, std=BasicConfig.std), ]
     )
     val_transform = transforms.Compose([
         transforms.Grayscale(),
-        transforms.Resize((BasicConfig.IMG_H, BasicConfig.IMG_W)),
+        transforms.Resize((BasicConfig.img_h, BasicConfig.img_w)),
         transforms.ToTensor(),
         transforms.Normalize(mean=BasicConfig.mean, std=BasicConfig.std), ]
     )
@@ -39,13 +39,13 @@ class AugConfig:
     def update_aug(self):
         self.train_transform = transforms.Compose([
             transforms.Grayscale(),
-            transforms.Resize((self.IMG_H, self.IMG_W)),
+            transforms.Resize((self.img_h, self.img_w)),
             transforms.ToTensor(),
             transforms.Normalize(mean=self.mean, std=self.std), ]
         )
         self.val_transform = transforms.Compose([
             transforms.Grayscale(),
-            transforms.Resize((self.IMG_H, self.IMG_W)),
+            transforms.Resize((self.img_h, self.img_w)),
             transforms.ToTensor(),
             transforms.Normalize(mean=self.mean, std=self.std), ]
         )
@@ -53,22 +53,23 @@ class AugConfig:
 
 @dataclass(init=True)
 class Config(BasicConfig, AugConfig):
-    N_HIDDEN = 256  # size of the lstm hidden state
-    N_CHANNELS = 1
+    n_hidden = 256  # size of the lstm hidden state
+    lstm_input = 64  # size of the lstm_input feature size
+    n_channels = 1
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    LR = 0.0005
-    LR_PATIENCE = 10
-    LR_REDUCE_FACTOR = 0.1
-    BATCH_SIZE = 128
+    lr = 0.0005
+    lr_patience = 10
+    lr_reduce_factor = 0.1
+    batch_size = 128
     epochs = 200
-    N_WORKERS = 8
+    n_workers = 8
 
-    alphabets = ALPHABETS[BasicConfig.ALPHABET_NAME]
-    CHAR2LABEL = dict()
-    LABEL2CHAR = dict()
+    alphabets = ALPHABETS[BasicConfig.alphabet_name]
+    char2label = dict()
+    label2char = dict()
 
     # Early stopping
-    EARLY_STOPPING_PATIENCE = 30
+    early_stopping_patience = 30
 
     def update_config_param(self, args):
         variables = vars(args)
@@ -80,8 +81,8 @@ class Config(BasicConfig, AugConfig):
         self.update()
 
     def update(self):
-        self.CHAR2LABEL = {char: i + 1 for i, char in enumerate(self.alphabets)}
-        self.LABEL2CHAR = {label: char for char, label in self.CHAR2LABEL.items()}
+        self.char2label = {char: i + 1 for i, char in enumerate(self.alphabets)}
+        self.label2char = {label: char for char, label in self.char2label.items()}
 
         self.update_aug()
 
