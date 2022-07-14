@@ -21,12 +21,12 @@ make sure that the dataset has the following characters:
 ```commandline
 ├── data-dir
 │   ├── train
-│   │  ├──<text>_<index_01>.jpg
-│   │  ├──<text>_<index_02>.jpg
+│   │  ├──<index_01>_<text>.jpg
+│   │  ├──<index_02>_<text>.jpg
 │   │  ├──...
 │   ├── val
-│   │  ├──<text>_<index_01>.jpg
-│   │  ├──<text>_<index_02>.jpg
+│   │  ├──<index_01>_<text>.jpg
+│   │  ├──<index_02>_<text>.jpg
 ...
 ```
 
