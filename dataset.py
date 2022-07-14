@@ -14,11 +14,6 @@ from settings import Config
 
 
 class CRNNDataset(Dataset):
-    # DEFAULT_TRANSFORM = transforms.Compose([
-    #     transforms.Grayscale(),
-    #     transforms.Resize((Config.img_h, Config.img_w)),
-    #     transforms.ToTensor()]
-    # )
 
     def __init__(self, root, characters, transform=None, logger=None):
         self.transform = transform
@@ -80,7 +75,7 @@ class CRNNDataset(Dataset):
     @staticmethod
     def get_label(img_path):
         label = split_extension(split(img_path)[-1])[0]
-        label = label.split('_')[0]
+        label = label.split('_')[-1]
         return label
 
     @staticmethod
