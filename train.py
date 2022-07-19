@@ -8,7 +8,7 @@ from dataset import CRNNDataset
 from settings import Config
 from torch.nn import CTCLoss
 from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint, LearningRateMonitor
-
+from torch.nn import functional as F
 torch.backends.cudnn.benchmark = True
 
 
@@ -22,7 +22,7 @@ class LitCRNN(pl.LightningModule):
                                     n_hidden=self.hparams.n_hidden,
                                     lstm_input=self.hparams.lstm_input)
         self.model.apply(self.model.weights_init)
-        self.criterion = CTCLoss(reduction='sum')
+        self.criterion = CTCLoss(reduction='mean')
 
     def forward(self, x):
         logit = self.model(x)
@@ -113,6 +113,9 @@ def main():
     parser.add_argument("--device", default="cuda", help="what should be the device for training, default is cuda")
     parser.add_argument("--mean", nargs="+", type=float, default=[0.4845], help="dataset channel-wise mean")
     parser.add_argument("--std", nargs="+", type=float, default=[0.1884], help="dataset channel-wise std")
+    parser.add_argument("--img_w", type=int, default=100, help="dataset img width size")
+    parser.add_argument("--n_workers", type=int, default=8, help="number of workers used for dataset collection")
+    parser.add_argument("--batch_size", type=int, default=128, help="batch size number")
     parser.add_argument("--alphabets", default='ابپتشثجدزسصطعفقکگلمنوهی+۰۱۲۳۴۵۶۷۸۹',
                         help="alphabets used in the process")
     args = parser.parse_args()
