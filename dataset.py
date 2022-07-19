@@ -9,8 +9,6 @@ import torchvision.transforms as transforms
 from PIL import Image
 from deep_utils import split_extension, log_print
 from tqdm import tqdm
-from alphabets import ALPHABETS
-from settings import Config
 
 
 class CRNNDataset(Dataset):
@@ -97,14 +95,21 @@ class CRNNDataset(Dataset):
         return images, labels, labels_lengths
 
 
-def get_mean_std(data_loader: DataLoader):
+def get_mean_std(dataset_dir, alphabets, batch_size, img_h, img_w):
     """
     Getting channel wise mean and std
-    :param data_loader:
     :return:
     """
+    transformations = transforms.Compose([
+        transforms.Grayscale(),
+        transforms.Resize((img_h, img_w)),
+        transforms.ToTensor()]
+    )
+
+    dataset = CRNNDataset(root=dataset_dir, transform=transformations, characters=alphabets)
+    data_loader = DataLoader(dataset, batch_size=batch_size, collate_fn=dataset.collate_fn)
     mean, std = 0, 0
-    n_samples = len(data_loader.dataset)
+    n_samples = len(dataset)
     for images, labels, labels_lengths in tqdm(data_loader, desc="Getting mean and std"):
         # channel wise
         mean += torch.sum(torch.mean(images, dim=(2, 3)), dim=0)
@@ -116,24 +121,13 @@ def get_mean_std(data_loader: DataLoader):
 
 if __name__ == '__main__':
     parser = ArgumentParser()
-    parser.add_argument("--train_directory",
-                        default="/home/ai/projects/vehicle-plate-recognition-training/recognition/datasets/train")
+    parser.add_argument("--dataset_dir", help="path to dataset")
     parser.add_argument("--batch_size", default=128)
-    parser.add_argument("--alphabet_name", default="FA_LPR", help="alphabet name from alphabets.py module")
-    parser.add_argument("--alphabets", default='ابپتشثجدزسصطعفقکگلمنوهی+۰۱۲۳۴۵۶۷۸۹',
-                        help="alphabets used in dataset, if this is set the alphabet_name is ignored")
+    parser.add_argument("--alphabets", default='ابپتشثجدزسصطعفقکگلمنوهی+۰۱۲۳۴۵۶۷۸۹', help="alphabets used in dataset")
+    parser.add_argument("--img_h", default=32, type=int)
+    parser.add_argument("--img_w", default=100, type=int)
     args = parser.parse_args()
 
-    transformations = transforms.Compose([
-        transforms.Grayscale(),
-        transforms.RandomHorizontalFlip(p=1),  # Makes no difference :D
-        transforms.Resize((Config.img_h, Config.img_w)),
-        transforms.ToTensor()]
-    )
-
-    dataset = CRNNDataset(root=args.train_directory, transform=transformations,
-                          characters=args.alphabets if args.alphabets is not None else ALPHABETS[args.alphabet_name])
-    data_loader = DataLoader(dataset, batch_size=args.batch_size, collate_fn=dataset.collate_fn)
-    mean, std = get_mean_std(data_loader)
+    mean, std = get_mean_std(args.dataset_dir, alphabets=args.alphabets, batch_size=args.batch_size,
+                                        img_h=args.img_h, img_w=args.img_w)
     log_print(None, f"MEAN: {mean}, STD: {std}")
-    log_print(None, f"N_CLASSES: {dataset.n_classes} ---> {''.join(dataset.char2label.keys())}")
