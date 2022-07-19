@@ -6,10 +6,18 @@ from argparse import ArgumentParser
 from dataset import CRNNDataset
 
 parser = ArgumentParser()
-parser.add_argument("--data_directory", default="/home/ai/projects/vehicle-plate-recognition-training/recognition/datasets/fa_dataset")
-args = parser.parse_args()
+parser.add_argument("--data_directory", required=True, type=str, help="path to dataset")
 
-characters = set()
-for name in os.listdir(args.data_directory):
-    characters |= set(CRNNDataset.get_label(name))
-print(f'[INFO] characters: {"".join(sorted(characters))}')
+
+def get_unique_characters(data_directory):
+    unique_characters = set()
+    for name in os.listdir(data_directory):
+        unique_characters |= set(CRNNDataset.get_label(name))
+    unique_characters = "".join(sorted(unique_characters))
+    return unique_characters
+
+
+if __name__ == '__main__':
+    args = parser.parse_args()
+    characters = get_unique_characters(args.data_directory)
+    print(f'[INFO] characters: {characters}')
