@@ -2,6 +2,7 @@ import torch
 from torchvision import transforms
 from dataclasses import dataclass
 from alphabets import ALPHABETS
+from argparse import Namespace
 
 
 @dataclass(init=True)
@@ -19,6 +20,9 @@ class BasicConfig:
     train_directory = '/home/ai/projects/vehicle-plate-recognition-training/recognition/datasets/train'
     val_directory = '/home/ai/projects/vehicle-plate-recognition-training/recognition/datasets/val'
     output_dir = "output"
+
+    def update_basic(self):
+        self.n_classes = len(self.alphabets) + 1
 
 
 @dataclass(init=True, repr=True)
@@ -72,7 +76,12 @@ class Config(BasicConfig, AugConfig):
     early_stopping_patience = 30
 
     def update_config_param(self, args):
-        variables = vars(args)
+        if isinstance(args, Namespace):
+            variables = vars(args)
+        elif isinstance(args, dict):
+            variables = args
+        else:
+            raise ValueError()
         for k, v in variables.items():
             if hasattr(self, k):
                 setattr(self, k, v)
@@ -83,7 +92,7 @@ class Config(BasicConfig, AugConfig):
     def update(self):
         self.char2label = {char: i + 1 for i, char in enumerate(self.alphabets)}
         self.label2char = {label: char for char, label in self.char2label.items()}
-
+        self.update_basic()
         self.update_aug()
 
     def __repr__(self):
