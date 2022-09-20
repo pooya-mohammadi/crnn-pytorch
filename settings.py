@@ -1,6 +1,8 @@
 import torch
-from torchvision import transforms
+# from torchvision import transforms
+import albumentations as A
 from dataclasses import dataclass
+from albumentations.pytorch import ToTensorV2
 from alphabets import ALPHABETS
 from argparse import Namespace
 
@@ -26,37 +28,68 @@ class BasicConfig:
 
 
 @dataclass(init=True, repr=True)
-class AugConfig:
-    train_transform = transforms.Compose([
-        transforms.Grayscale(),
-        transforms.Resize((BasicConfig.img_h, BasicConfig.img_w)),
-        transforms.ToTensor(),
-        transforms.Normalize(mean=BasicConfig.mean, std=BasicConfig.std), ]
-    )
-    val_transform = transforms.Compose([
-        transforms.Grayscale(),
-        transforms.Resize((BasicConfig.img_h, BasicConfig.img_w)),
-        transforms.ToTensor(),
-        transforms.Normalize(mean=BasicConfig.mean, std=BasicConfig.std), ]
-    )
+class AugConfig(BasicConfig):
+    # train_transform = transforms.Compose([
+    #     transforms.Grayscale(),
+    #     transforms.Resize((BasicConfig.img_h, BasicConfig.img_w)),
+    #     transforms.ToTensor(),
+    #     transforms.Normalize(mean=BasicConfig.mean, std=BasicConfig.std), ]
+    # )
+    # val_transform = transforms.Compose([
+    #     transforms.Grayscale(),
+    #     transforms.Scale()
+    #     transforms.Resize((BasicConfig.img_h, BasicConfig.img_w)),
+    #     transforms.ToTensor(),
+    #     transforms.Normalize(mean=BasicConfig.mean, std=BasicConfig.std), ]
+    # )
+
+    train_transform = A.Compose(
+        [A.Rotate(limit=10, p=0.2),
+         A.RandomScale(scale_limit=0.2),
+         A.Resize(height=BasicConfig.img_h, width=BasicConfig.img_w),
+         A.Normalize(BasicConfig.mean, BasicConfig.std, max_pixel_value=255.0),
+         A.ToGray(always_apply=True, p=1),
+         ToTensorV2()
+         ])
+    val_transform = A.Compose(
+        [
+         A.Resize(height=BasicConfig.img_h, width=BasicConfig.img_w),
+         A.Normalize(BasicConfig.mean, BasicConfig.std, max_pixel_value=255.0),
+         A.ToGray(always_apply=True, p=1),
+         ToTensorV2()
+         ])
 
     def update_aug(self):
-        self.train_transform = transforms.Compose([
-            transforms.Grayscale(),
-            transforms.Resize((self.img_h, self.img_w)),
-            transforms.ToTensor(),
-            transforms.Normalize(mean=self.mean, std=self.std), ]
-        )
-        self.val_transform = transforms.Compose([
-            transforms.Grayscale(),
-            transforms.Resize((self.img_h, self.img_w)),
-            transforms.ToTensor(),
-            transforms.Normalize(mean=self.mean, std=self.std), ]
-        )
+        # self.train_transform = transforms.Compose([
+        #     transforms.Grayscale(),
+        #     transforms.Resize((self.img_h, self.img_w)),
+        #     transforms.ToTensor(),
+        #     transforms.Normalize(mean=self.mean, std=self.std), ]
+        # )
+        # self.val_transform = transforms.Compose([
+        #     transforms.Grayscale(),
+        #     transforms.Resize((self.img_h, self.img_w)),
+        #     transforms.ToTensor(),
+        #     transforms.Normalize(mean=self.mean, std=self.std), ]
+        # )
+        self.train_transform = A.Compose(
+            [A.Rotate(limit=10, p=0.2),
+             A.RandomScale(scale_limit=0.2),
+             A.Resize(height=self.img_h, width=self.img_w),
+             A.Normalize(self.mean, self.std, max_pixel_value=255.0),
+             A.ToGray(always_apply=True, p=1),
+             ToTensorV2()
+             ])
+        self.val_transform = A.Compose(
+            [A.Resize(height=self.img_h, width=self.img_w),
+             A.Normalize(self.mean, self.std, max_pixel_value=255.0),
+             A.ToGray(always_apply=True, p=1),
+             ToTensorV2()
+             ])
 
 
 @dataclass(init=True)
-class Config(BasicConfig, AugConfig):
+class Config(AugConfig):
     n_hidden = 256  # size of the lstm hidden state
     lstm_input = 64  # size of the lstm_input feature size
     n_channels = 1
@@ -85,6 +118,8 @@ class Config(BasicConfig, AugConfig):
         for k, v in variables.items():
             if hasattr(self, k):
                 setattr(self, k, v)
+            elif k == "visualize":
+                print("[INFO] Skipped visualize argument!")
             else:
                 raise ValueError(f"value {k} is not defined in Config...")
         self.update()
