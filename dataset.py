@@ -12,6 +12,7 @@ from deep_utils import split_extension, log_print
 from torch import nn
 from torch.utils.data import Dataset, DataLoader
 from tqdm import tqdm
+import numpy as np
 
 
 class CRNNDataset(Dataset):
@@ -65,14 +66,13 @@ class CRNNDataset(Dataset):
     def __getitem__(self, index):
         assert index <= len(self), 'index range error'
         img_path = self.image_paths[index]
-
         if isinstance(self.transform, albumentations.core.composition.Compose):
-            img = cv2.imread(img_path)[..., ::-1]  # this is used for albumentation
+            # img = cv2.imread(img_path)[..., ::-1]  # this is used for albumentation
+            img = np.array(Image.open(img_path))[..., :3]
             img = self.transform(image=img)['image'][0:1, ...].unsqueeze(0)  # albumentation
         else:
-            img = Image.open(img_path)  # This is used for transformers
+            img = Image.open(img_path)[..., :3]  # This is used for transformers
             img = self.transform(img).unsqueeze(0)  # torch transformers
-
         label = torch.LongTensor(self.labels[index]).unsqueeze(0)
         label_length = torch.LongTensor([self.labels_length[index]]).unsqueeze(0)
 
