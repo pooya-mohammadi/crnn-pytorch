@@ -96,6 +96,7 @@ class Config(AugConfig):
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     lr = 0.0005
     lr_patience = 10
+    min_lr = 5e-6
     lr_reduce_factor = 0.1
     batch_size = 128
     epochs = 200

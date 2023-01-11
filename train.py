@@ -15,7 +15,7 @@ torch.backends.cudnn.benchmark = True
 
 
 class LitCRNN(pl.LightningModule):
-    def __init__(self, img_h, n_channels, n_classes, n_hidden, lstm_input, lr, lr_reduce_factor, lr_patience):
+    def __init__(self, img_h, n_channels, n_classes, n_hidden, lstm_input, lr, lr_reduce_factor, lr_patience, min_lr):
         super(LitCRNN, self).__init__()
         self.save_hyperparameters()
         self.model = CRNNModelTorch(img_h=self.hparams.img_h,
@@ -76,7 +76,7 @@ class LitCRNN(pl.LightningModule):
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), lr=self.hparams.lr)
         scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=self.hparams.lr_reduce_factor,
-                                      patience=self.hparams.lr_patience, verbose=True)
+                                      patience=self.hparams.lr_patience, verbose=True, min_lr=self.hparams.min_lr)
         return {"optimizer": optimizer, "lr_scheduler": scheduler, "monitor": "val_loss"}
 
     @staticmethod
@@ -137,7 +137,7 @@ def main():
                          callbacks=[early_stopping, model_checkpoint, learning_rate_monitor],
                          default_root_dir=output_dir)
     lit_crnn = LitCRNN(config.img_h, config.n_channels, config.n_classes, config.n_hidden, config.lstm_input, config.lr,
-                       config.lr_reduce_factor, config.lr_patience)
+                       config.lr_reduce_factor, config.lr_patience, config.min_lr)
     train_loader, val_loader = lit_crnn.get_loaders(config)
     if args.visualize:
         print("[INFO] Visualizing train-loader")
