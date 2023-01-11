@@ -1,3 +1,5 @@
+import warnings
+warnings.filterwarnings("ignore")
 from argparse import ArgumentParser
 from pathlib import Path
 import torch
