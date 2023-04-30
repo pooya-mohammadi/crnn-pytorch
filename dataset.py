@@ -71,7 +71,7 @@ class CRNNDataset(Dataset):
             img = np.array(Image.open(img_path))[..., :3]
             img = self.transform(image=img)['image'][0:1, ...].unsqueeze(0)  # albumentation
         else:
-            img = Image.open(img_path)[..., :3]  # This is used for transformers
+            img = Image.fromarray(np.array(Image.open(img_path))[..., :3])  # This is used for transformers
             img = self.transform(img).unsqueeze(0)  # torch transformers
         label = torch.LongTensor(self.labels[index]).unsqueeze(0)
         label_length = torch.LongTensor([self.labels_length[index]]).unsqueeze(0)
