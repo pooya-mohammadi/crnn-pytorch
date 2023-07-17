@@ -141,13 +141,21 @@ https://ceit.aut.ac.ir/~keyvanrad/download/ML971/project/
 
 Password: ML971Data
 
+### Labeled Dataset
+https://github.com/Vargha-Kh/crnn-pytorch/releases/tag/Persian-licence-plate-recognition
+
 ### Foot-Notes:
 1. For labeling tool checkout my project:
 https://github.com/pooya-mohammadi/ocr-labeling-tool
-   
+
+## Forked repositories:
+1. https://github.com/Vargha-Kh/crnn-pytorch
 
 # References
 
 1. https://github.com/pooya-mohammadi/deep_utils
 2. https://github.com/AryanShekarlaban/
 3. https://arxiv.org/pdf/1507.05717.pdf
+
+
+#
