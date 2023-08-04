@@ -45,7 +45,7 @@ The output will be like the following:
 [INFO] characters: +ابتثجدزسشصطعقلمنهوپگی۰۱۲۳۴۵۶۷۸۹
 ```
 
-Run the following command to get the `mean`, `std` and `n_classes` of your input dataset:
+Run the following command to get the `mean` and `std` of your input dataset:
 
 ```commandline
 python dataset.py --dataset_dir <your-train-dir> --alphabets +ابتثجدزسشصطعقلمنهوپگی۰۱۲۳۴۵۶۷۸۹  --batch_size 128
@@ -55,7 +55,6 @@ The output should be like below:
 
 ```commandline
 [INFO] MEAN: [0.4845], STD: [0.1884]
-[INFO] N_CLASSES: 35 ---> ابپتشثجدزسصطعفقکگلمنوهی+۰۱۲۳۴۵۶۷۸۹
 ```
 
 Run the following command to get the optimal img_w. For longer label length the img_w should be longer than usual, unless
