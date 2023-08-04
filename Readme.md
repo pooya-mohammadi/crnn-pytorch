@@ -48,7 +48,7 @@ The output will be like the following:
 Run the following command to get the `mean`, `std` and `n_classes` of your input dataset:
 
 ```commandline
-python dataset.py --train_directory <your-train-dir> --alphabet_name FA_LPR --batch_size 128
+python dataset.py --dataset_dirtrain_directory <your-train-dir> --alphabet_name FA_LPR --batch_size 128
 ```
 or
 
