@@ -131,7 +131,7 @@ def get_mean_std(dataset_dir, alphabets, batch_size, img_h, img_w):
 if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument("--dataset_dir", help="path to dataset")
-    parser.add_argument("--batch_size", default=128)
+    parser.add_argument("--batch_size", default=128, type=int)
     parser.add_argument("--alphabets", default='ابپتشثجدزسصطعفقکگلمنوهی+۰۱۲۳۴۵۶۷۸۹', help="alphabets used in dataset")
     parser.add_argument("--img_h", default=32, type=int)
     parser.add_argument("--img_w", default=100, type=int)
