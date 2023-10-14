@@ -133,7 +133,7 @@ Image examples:
 ### Sample Persian Dataset is avalable by Amirkabir University of Technology in the following link:
 https://ceit.aut.ac.ir/~keyvanrad/download/ML971/project/
 
-Password: ML971Data
+Password: Upon request to AUT
 
 ### Labeled Dataset
 https://github.com/Vargha-Kh/crnn-pytorch/releases/tag/Persian-licence-plate-recognition
